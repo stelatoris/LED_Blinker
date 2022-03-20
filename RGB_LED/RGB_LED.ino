@@ -32,11 +32,12 @@ void LED_timer::end()
   prev_on_time=0;
   prev_off_time=0;
   prev_time=0;
-  
+
   blink_on=false;
   on_interval=false;
   off_interval=false;
   switch_ON=false;
+  sequence_done=false;
 }
 
 bool LED_timer::blink_LED( int on_int, int off_int, long total)
@@ -45,34 +46,49 @@ bool LED_timer::blink_LED( int on_int, int off_int, long total)
   on_time=on_int;
   off_time=off_int;
 
-
-  if(!blink_on) {   // Start here
-    blink_on=true;
-    prev_on_time=millis();
-    on_interval=true;    
-  }
-
-  if(blink_on) {
-    if(on_interval) {
-      if(millis()-prev_on_time>on_time) {
-        on_interval=false;
-        off_interval=true;
-        prev_off_time=millis();
-        return false;        
+  if(sequence_done) return false;
+  
+  if(!blink_on && !sequence_done) {   // Start here
+      blink_on=true;
+      prev_on_time=millis();
+      prev_time=millis();
+      on_interval=true;    
       }
-      return true;
+  else {
+    if(millis()-prev_time>total_interval) {
+    sequence_done=true;
+    blink_on=false;
+    on_interval=false;
+    off_interval=false;
+    sequence_done=true;
+    return false;
     }
     else{
-      if(millis()-prev_off_time>off_time){
-        off_interval=false;
-        on_interval=true;
-        prev_on_time=millis();
-        return true;
+      if(blink_on) {
+        if(on_interval) {
+          if(millis()-prev_on_time>on_time) {
+            on_interval=false;
+            off_interval=true;
+            prev_off_time=millis();
+            return false;        
+          }
+          return true;
+        }
+        else{
+          if(millis()-prev_off_time>off_time){
+            off_interval=false;
+            on_interval=true;
+            prev_on_time=millis();
+            return true;
+          }
+          return false;
+        }
       }
-      return false;
+      else return false;
     }
   }
-  else return false;
+  
+  
   
   /*
   Serial.print("\t total_interval:");
@@ -167,7 +183,7 @@ struct LED {
 
 //--------------------------------------------------------------
 LED_timer gear_up;
-//LED_timer gear_down;
+LED_timer gear_down;
 
 void setColor(int redValue, int greenValue, int blueValue) 
 {
@@ -181,30 +197,27 @@ void gears_panel()
   
   gear_swtch_st=digitalRead(gear_swtch);
   if (gear_swtch_st) {      // Gears DOWN
-    Serial.print("Gears DOWN");
-    //gear_down.switch_ON=true;
     gear_up.end();
-    Serial.print("\t GearUP switch_ON:");
-    Serial.print(gear_up.switch_ON);
-    /*if(gear_down.blink_LED(5000, 5000, 5050)) {
-      setColor(0, 255, 0);
+    if(!gear_down.sequence_done){
+      if(gear_down.blink_LED(700, 700, 7700)) {
+        setColor(0, 255, 0);
+      }
+      else {
+        setColor(0, 0, 0);
+      }
     }
     else {
-      setColor(0, 0, 0);
-    }
-    */
+        setColor(0, 255, 0);
+      }    
     //gear_up.switch_ON=false;
-    setColor(0, 255, 0);
   }
   else {    // Gears UP
-    Serial.print("Gears UP");              
-    //gear_up.switch_ON=true;
-    //gear_down.switch_ON=false;
-    if(gear_up.blink_LED(1000, 1000, 10000)) {
+    gear_down.end();
+    if(gear_up.blink_LED(700, 700, 7700)) {
       setColor(255, 0, 0);
     }
     else {
-      setColor(255, 255, 255);
+      setColor(0, 0, 0);
     }   
   }
   Serial.println(" ");
