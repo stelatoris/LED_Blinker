@@ -86,92 +86,7 @@ bool LED_timer::blink_LED( int on_int, int off_int, long total)
       }
       else return false;
     }
-  }
-  
-  
-  
-  /*
-  Serial.print("\t total_interval:");
-  Serial.print(total_interval);
-  Serial.print("\t millis()-prev_time:");
-  Serial.print(millis()-prev_time);
-  Serial.print("\t prev_time:");
-  Serial.print(prev_time);
-  Serial.print("\t millis()-prev_on_time:");
-  Serial.print(millis()-prev_on_time);
-  Serial.print("\t prev_on_time:");
-  Serial.print(prev_on_time);
-  Serial.print("\t millis()-prev_off_time:");
-  Serial.print(millis()-prev_off_time);
-  Serial.print("\t prev_off_time:");
-  Serial.print(prev_off_time);
-
-
-  Serial.print("\t blink_on:");
-  Serial.print(blink_on);
-  Serial.print("\t on_interval:");
-  Serial.print(on_interval);
-  Serial.print("\t off_interval:");
-  Serial.print(off_interval);
-
-  bool status_LED;
-
-    if(sequence_done==true) {
-      return false;
-    }
-    else if(sequence_done==false) {  // Binking sequence is already ON
-      if(millis()-prev_time>total_interval) { //if total interval had passed
-        sequence_done=true;
-        Serial.print("\t timer total :");
-        Serial.print(millis()-prev_time);
-        blink_on=false;
-        on_interval=false;
-        off_interval=false;
-        //Serial.print("\t LED OFF at total interv:");
-        //Serial.print(false);
-        status_LED=false;           // ENDS sequence : LED turns OFF
-      }
-      else {
-        if(on_interval==true){
-          if(millis()-prev_on_time>on_time) { // if ON intervall had passed
-            on_interval=false;
-            prev_off_time=millis();
-            off_interval=true;
-            //Serial.print("\t LED OFF at ON interv:");
-            //Serial.print(false);
-            status_LED=false;         // LED turns OFF
-            Serial.print("\t HERE:");
-        
-          }
-          else {
-            //Serial.print("\t LED ON at ON interv:");
-            //Serial.print(true);
-            off_interval=false;
-            status_LED=true;     // LED stays ON
-          }
-        }
-        if(off_interval) {
-          if(millis()-prev_off_time>off_time) { // if OFF intervall had passed
-            off_interval=false;
-            on_interval=true;
-            //Serial.print("\t LED ON at OFF interv:");
-            //Serial.print(true);
-            //return true;        // LED turns ON
-          }
-          else status_LED=false;    // LED stays OFF
-        }  
-       }
-    }
-    else {          // Begin blinking sequence
-      blink_on=true;
-      on_interval=true;
-      prev_time=millis();
-      prev_on_time=millis();
-      Serial.print("\t Blink Begin!");
-    }
-  
-    return status_LED;  
-    */   
+  }   
 }
 
 struct LED {
@@ -229,9 +144,7 @@ void setup() {
   pinMode(gear_redPin, OUTPUT);
   pinMode(gear_greenPin, OUTPUT);
   pinMode(gear_bluePin, OUTPUT);
-  pinMode(gear_swtch, INPUT);
-
-  
+  pinMode(gear_swtch, INPUT);  
 }
 
 void loop() {
