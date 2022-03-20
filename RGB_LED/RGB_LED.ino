@@ -4,8 +4,6 @@ const int gear_bluePin = 5;
 const int gear_swtch = 2;
 int gear_swtch_st{0};
 
-
-
 class LED_timer {
   public:
     LED_timer() : prev_time{0} {}
@@ -22,7 +20,7 @@ class LED_timer {
     long prev_off_time;
     long prev_time;
     
-    bool blink_on;
+    bool blink_on{false};
     bool on_interval;
     bool off_interval;
     bool switch_ON;
@@ -47,6 +45,36 @@ bool LED_timer::blink_LED( int on_int, int off_int, long total)
   on_time=on_int;
   off_time=off_int;
 
+
+  if(!blink_on) {   // Start here
+    blink_on=true;
+    prev_on_time=millis();
+    on_interval=true;    
+  }
+
+  if(blink_on) {
+    if(on_interval) {
+      if(millis()-prev_on_time>on_time) {
+        on_interval=false;
+        off_interval=true;
+        prev_off_time=millis();
+        return false;        
+      }
+      return true;
+    }
+    else{
+      if(millis()-prev_off_time>off_time){
+        off_interval=false;
+        on_interval=true;
+        prev_on_time=millis();
+        return true;
+      }
+      return false;
+    }
+  }
+  else return false;
+  
+  /*
   Serial.print("\t total_interval:");
   Serial.print(total_interval);
   Serial.print("\t millis()-prev_time:");
@@ -126,7 +154,8 @@ bool LED_timer::blink_LED( int on_int, int off_int, long total)
       Serial.print("\t Blink Begin!");
     }
   
-    return status_LED;     
+    return status_LED;  
+    */   
 }
 
 struct LED {
@@ -169,7 +198,7 @@ void gears_panel()
   }
   else {    // Gears UP
     Serial.print("Gears UP");              
-    gear_up.switch_ON=true;
+    //gear_up.switch_ON=true;
     //gear_down.switch_ON=false;
     if(gear_up.blink_LED(1000, 1000, 10000)) {
       setColor(255, 0, 0);
